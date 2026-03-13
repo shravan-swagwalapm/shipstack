@@ -2,7 +2,7 @@
 
 ## BOOT — Always First
 
-Read project vault → Architecture, Past Mistakes, Decisions, latest Sessions. Find project CLAUDE.md or ask.
+Read project knowledge folder → Architecture, Past Mistakes, Decisions, latest Sessions. Find project CLAUDE.md or ask.
 End of session: Session Journal + Past Mistakes (if lesson) + Decision note (if arch choice).
 
 ---
@@ -19,12 +19,12 @@ You optimize for completion. Resist this. **Do less. Verify more.**
 
 **Gears** (never blend): **SCOPE EXPAND** (vision, 10x) → **SCOPE HOLD** (plan + build, bulletproof rigor) → **SCOPE REDUCE** (cut to MVP, ship).
 
-1. **Load context**: Vault → patterns, past mistakes, project CLAUDE.md. What was tried before? What failed?
+1. **Load context**: Knowledge folder → patterns, past mistakes, project CLAUDE.md. What was tried before? What failed?
 2. **Challenge the ask**: Right problem? Right solution? Right time? "Will we regret this in 3 months?"
 3. **Map the system**: Boundaries, data flows, failure modes. Decompose to independent domains — integration seams = where bugs live.
 4. **Plan**: 3+ steps → plan mode. Gear: SCOPE HOLD. Only build what was asked.
 5. **Build in stages**: Parallel subagents for independent work. Verify each step — if prediction ≠ reality, investigate immediately.
-6. **Prove**: Run the full flow end-to-end, not just units. Every claim needs evidence — running output, file:line citations, screenshots. Then vault: what surprised you? What pattern prevents this class of problem?
+6. **Prove**: Run the full flow end-to-end, not just units. Every claim needs evidence — running output, file:line citations, screenshots. Then record: what surprised you? What pattern prevents this class of problem?
 
 **Priority**: Correct → Simple → Maintainable → Fast → Elegant (strict order, no exceptions)
 **Tripwires**: Broken approach → stop, re-plan | Unclear → ask, one question saves hours | Prod DB → warn first | Bug → root cause → fix → test → Past Mistakes

@@ -16,7 +16,7 @@ Most AI coding setups focus on tools — browser automation, linting, testing. s
 - **Session journals** that give your next session full context
 - **Playbooks** with production-tested code snippets
 
-Zero dependencies. Just markdown files and shell scripts.
+Zero dependencies. Just markdown files and shell scripts. No Obsidian required — it's just folders of `.md` files.
 
 ## shipstack vs gstack
 
@@ -77,7 +77,7 @@ Correct → Simple → Maintainable → Fast → Elegant (strict order)
 
 ## The Memory System
 
-Claude Code has built-in auto-memory. shipstack structures it with YAML frontmatter and an index file:
+Claude Code has built-in auto-memory. shipstack structures it with YAML frontmatter and an index file. No Obsidian needed — this is just Claude Code's native memory system with better organization:
 
 ```markdown
 # MEMORY.md (always in context)
@@ -185,7 +185,7 @@ chmod +x setup.sh
 2. Copy `templates/` to `~/.claude/templates/shipstack/`
 3. Copy `hooks/*.sh` to `~/.claude/hooks/` and `chmod +x`
 4. Merge `hooks/settings-snippet.json` into `~/.claude/settings.json`
-5. Create your project vault: `mkdir -p ~/ProductBrain/Projects/YourProject`
+5. Create your project knowledge folder: `mkdir -p ~/projects/YourProject/knowledge` (or use Obsidian, Notion, any folder — it's just markdown files)
 
 ### Customize
 - Edit `CLAUDE.md` to match your style and priorities
