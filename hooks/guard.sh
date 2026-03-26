@@ -30,39 +30,26 @@ if [ -f "$CONFIG_FILE" ]; then
     fi
 fi
 
-# Get the tool name and file path from the hook input
-# Claude Code passes tool info via environment variables
-TOOL_NAME="${CLAUDE_TOOL_NAME:-}"
-TOOL_INPUT="${CLAUDE_TOOL_INPUT:-}"
+# Read hook input from stdin (Claude Code passes JSON via stdin)
+INPUT=$(cat)
 
-# Only gate Edit and Write tools
-case "$TOOL_NAME" in
-    Edit|Write)
-        # Extract file_path from JSON input
-        FILE_PATH=$(echo "$TOOL_INPUT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('file_path',''))" 2>/dev/null)
+# Extract file_path from JSON input
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null)
 
-        if [ -z "$FILE_PATH" ]; then
-            exit 0  # Can't determine path, allow
-        fi
+if [ -z "$FILE_PATH" ]; then
+    exit 0  # Can't determine path, allow
+fi
 
-        # Resolve to absolute path
-        FILE_PATH=$(cd "$(dirname "$FILE_PATH")" 2>/dev/null && pwd)/$(basename "$FILE_PATH") 2>/dev/null || FILE_PATH="$FILE_PATH"
-
-        # Check if file is within scope
-        case "$FILE_PATH" in
-            "$SCOPE_DIR"*)
-                exit 0  # Within scope, allow
-                ;;
-            *)
-                echo "BLOCKED by shipstack guard: Edit outside scope."
-                echo "  Scope: $SCOPE_DIR"
-                echo "  Target: $FILE_PATH"
-                echo "  To remove scope lock: delete ~/.shipstack/freeze-scope.txt"
-                exit 1  # Outside scope, block
-                ;;
-        esac
+# Check if file is within scope
+case "$FILE_PATH" in
+    "$SCOPE_DIR"*)
+        exit 0  # Within scope, allow
         ;;
     *)
-        exit 0  # Not Edit/Write, allow
+        # Output JSON to block the operation
+        cat <<BLOCK
+{"decision":"block","reason":"BLOCKED by shipstack guard: Edit outside scope.\n  Scope: $SCOPE_DIR\n  Target: $FILE_PATH\n  To remove scope lock: delete ~/.shipstack/freeze-scope.txt"}
+BLOCK
+        exit 0
         ;;
 esac
