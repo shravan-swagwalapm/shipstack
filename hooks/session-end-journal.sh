@@ -1,21 +1,22 @@
 #!/bin/bash
-# shipstack: Session End Hook
+# shipstack v2.0: Session End Hook
 # Fires when a Claude Code session ends.
-# Reminds you to capture learnings before context is lost.
+# Prompts for knowledge capture and suggests /retro.
 #
 # Install: Add to ~/.claude/settings.json under "hooks.SessionEnd"
 # See: hooks/settings-snippet.json
 
 echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  📓 Session ending — capture your learnings"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "  shipstack — Session ending"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "Before you close this terminal, consider:"
-echo "  1. Write a session journal (templates/session-journal.md)"
-echo "  2. Extract any mistakes → past-mistakes.md"
-echo "  3. Record any architectural decisions → decision-record.md"
-echo "  4. Update MEMORY.md if Claude learned something reusable"
+echo "Before you close, consider:"
+echo "  1. Run /retro to auto-capture learnings to vault"
+echo "  2. Or manually:"
+echo "     - Write a session journal"
+echo "     - Extract mistakes → past-mistakes.md"
+echo "     - Record decisions → decision-record.md"
 echo ""
-echo "Your future self will thank you."
+echo "Your future self (and your AI CTO) will thank you."
 echo ""
