@@ -2,7 +2,7 @@
 
 > Your AI coding tool forgets everything between sessions. Mine doesn't.
 
-**shipstack** is a knowledge operating system for AI-assisted development. It turns Claude Code from a stateless tool into a learning partner that gets smarter with every session.
+**shipstack** is a stateful sprint engine + knowledge OS for AI-assisted development. It turns Claude Code from a stateless tool into a learning partner with a full workflow pipeline that gets smarter with every session.
 
 I built 4 production products with this system — an education platform, a content engine with 5 autonomous agents, a RAG pipeline with 160K+ vectors, and a video production pipeline. Every pattern in this repo is battle-tested.
 
@@ -17,6 +17,33 @@ Most AI coding setups focus on tools — browser automation, linting, testing. s
 - **Playbooks** with production-tested code snippets
 
 Zero dependencies. Just markdown files and shell scripts. No Obsidian required — it's just folders of `.md` files.
+
+## What's New in v2.0: Pipeline Skills
+
+v2.0 adds 7 pipeline skills that chain together via filesystem artifacts. Every skill reads your accumulated knowledge (past mistakes, decisions) and writes pipeline artifacts for downstream skills.
+
+```
+/brainstorm ──→ /challenge ──→ /review-plan ──→ [BUILD] ──→ /review ──→ /ship-check ──→ /retro
+                                                   ↑                         ↑
+                                              /investigate              /guard (hook)
+```
+
+| Skill | Role | What It Does |
+|-------|------|-------------|
+| `/brainstorm` | Product Thinker | 6 forcing questions, adversarial spec review, anti-sycophancy |
+| `/challenge` | CEO/Founder | 4 scope modes, temporal interrogation, expansion ceremony |
+| `/review-plan` | Eng Manager | ASCII diagrams, test matrix, past-mistakes injection |
+| `/investigate` | Debugger | 4-phase root cause, 3-strike rule, scope lock via guard hook |
+| `/review` | Staff Engineer | Scope drift detection, past-mistakes-as-checklist, adversarial scaling |
+| `/ship-check` | Release Engineer | Readiness dashboard, staleness detection, GO/NO-GO |
+| `/retro` | Eng Manager | Session detection, eureka aggregation, auto knowledge capture |
+
+The key differentiator: **every skill reads past mistakes from your vault.** A code review that knows "we got burned by `.single()` last month" is categorically different from a generic review.
+
+```
+gstack:     Session 1 → Session 2 → Session 3 (all fresh, same quality)
+shipstack:  Session 1 → Session 2 → Session 3 (each session smarter than the last)
+```
 
 ## shipstack vs gstack
 
@@ -48,7 +75,7 @@ shipstack: Session 1 → Journal → Session 2 → Journal → Session 3
 
 ## The CLAUDE.md
 
-The heart of shipstack is a 67-line `CLAUDE.md` that defines how Claude operates:
+The heart of shipstack is a 74-line `CLAUDE.md` that defines how Claude operates:
 
 ```markdown
 # Identity
@@ -150,6 +177,7 @@ Hooks wire the knowledge system into Claude Code's lifecycle:
 
 - **Session start**: Injects PATH, sets env vars, reminds Claude to load vault context
 - **Session end**: Prompts you to capture learnings before context is lost
+- **Guard hook** (v2.0): PreToolUse hook that blocks edits outside declared scope during `/investigate`
 
 > [Hook setup guide →](hooks/README.md)
 
@@ -186,6 +214,7 @@ chmod +x setup.sh
 3. Copy `hooks/*.sh` to `~/.claude/hooks/` and `chmod +x`
 4. Merge `hooks/settings-snippet.json` into `~/.claude/settings.json`
 5. Create your project knowledge folder: `mkdir -p ~/projects/YourProject/knowledge` (or use Obsidian, Notion, any folder — it's just markdown files)
+6. Skills are auto-symlinked by `setup.sh`. To update: `cd shipstack && git pull`
 
 ### Customize
 - Edit `CLAUDE.md` to match your style and priorities
@@ -208,28 +237,33 @@ Every principle in shipstack has a reason:
 
 ```
 shipstack/
-├── CLAUDE.md                    # The enhanced global CLAUDE.md (67 lines)
-├── setup.sh                     # One-command install
+├── CLAUDE.md                    # The enhanced global CLAUDE.md
+├── setup.sh                     # One-command install (v2.0)
+├── skills/
+│   └── shipstack/
+│       ├── _preamble.md         # Shared: config, slug, vault loading
+│       ├── brainstorm/SKILL.md  # Design thinking + adversarial review
+│       ├── challenge/SKILL.md   # Scope modes + temporal interrogation
+│       ├── review-plan/SKILL.md # Eng review + test matrix
+│       ├── investigate/SKILL.md # 4-phase debugging + scope lock
+│       ├── review/SKILL.md      # Code review + past-mistakes checklist
+│       ├── ship-check/SKILL.md  # Readiness dashboard + staleness
+│       └── retro/SKILL.md       # Retrospective + knowledge capture
 ├── templates/
 │   ├── MEMORY.md                # Memory index template
+│   ├── handoff.md               # Session handoff template (v2.0)
 │   ├── memory/                  # Example memory files
 │   ├── session-journal.md       # Session journal template
 │   ├── decision-record.md       # ADR template
 │   ├── past-mistakes.md         # Mistake → rule template
 │   └── project-claude.md        # Per-project CLAUDE.md template
 ├── hooks/
-│   ├── session-start-vault.sh   # Boot hook
-│   ├── session-end-journal.sh   # End-of-session hook
+│   ├── session-start-vault.sh   # Boot hook (v2.0: handoff + pipeline context)
+│   ├── session-end-journal.sh   # End-of-session hook (v2.0: suggests /retro)
+│   ├── guard.sh                 # PreToolUse scope enforcement (v2.0)
 │   └── settings-snippet.json    # Copy-paste for settings.json
-├── playbooks/
-│   ├── nextjs-supabase.md       # Next.js + Supabase patterns
-│   ├── python-ai-rag.md         # Python AI/RAG patterns
-│   └── multi-agent-system.md    # Multi-agent system patterns
-├── examples/
-│   ├── demo-session.md          # Full loop transcript
-│   ├── past-mistakes-real.md    # Real mistakes (anonymized)
-│   ├── decision-record-real.md  # Real ADR (anonymized)
-│   └── session-journal-real.md  # Real journal (anonymized)
+├── playbooks/                   # Production-tested patterns
+├── examples/                    # Real-world usage (anonymized)
 └── docs/
     ├── philosophy.md            # Deep "why" behind each principle
     └── vs-gstack.md             # Direct comparison
